@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TecnoPoint SG | Catálogo Oficial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #090d16;
+            --bg-card: #121929;
+            --bg-card-hover: #182238;
+            --bg-panel: #0e1422;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent-cyan: #00d2ff;
+            --accent-blue: #3a7bd5;
+            --accent-ig: #e1306c;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --radius: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(0, 210, 255, 0.08), transparent 35%),
+                radial-gradient(circle at 85% 20%, rgba(225, 48, 108, 0.05), transparent 35%);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        header {
+            text-align: center;
+            padding: 36px 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .brand-badge {
+            display: inline-block;
+            background: rgba(0, 210, 255, 0.1);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 210, 255, 0.25);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 5px 12px;
+            border-radius: 999px;
+            margin-bottom: 12px;
+        }
+
+        header h1 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 800;
+            background: linear-gradient(90deg, #ffffff 0%, #00d2ff 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        header p.subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .trust-pills {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .trust-pill {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .trust-pill span {
+            color: var(--accent-cyan);
+        }
+
+        .filters-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .filters-top {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .filters-top {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .search-box input, .sort-select {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        .price-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 14px;
+        }
+
+        .price-inputs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .price-inputs label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .price-input-group {
+            display: flex;
+            align-items: center;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 4px 8px;
+        }
+
+        .price-input-group span {
+            color: var(--accent-cyan);
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-right: 4px;
+        }
+
+        .price-input-group input {
+            width: 70px;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.88rem;
+            outline: none;
+        }
+
+        .quick-ranges, .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .range-btn {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .range-btn:hover, .range-btn.active {
+            background: rgba(0, 210, 255, 0.15);
+            color: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+        }
+
+        .cat-tab {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cat-tab.active {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #060911;
+            border-color: transparent;
+            font-weight: 700;
+        }
+
+        .results-info {
+            margin-bottom: 14px;
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .product-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, border-color 0.2s, background 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            background: var(--bg-card-hover);
+            border-color: rgba(225, 48, 108, 0.35);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .badge-cat {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--accent-cyan);
+            background: rgba(0, 210, 255, 0.1);
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .badge-cond {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .product-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .product-details {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+        }
+
+        .card-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+            gap: 10px;
+        }
+
+        .price-label {
+            font-size: 0.68rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            display: block;
+        }
+
+        .price-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .price-value span {
+            color: var(--accent-cyan);
+            font-size: 0.9rem;
+            margin-right: 2px;
+        }
+
+        .btn-ig {
+            background: rgba(225, 48, 108, 0.15);
+            color: #ff659a;
+            border: 1px solid rgba(225, 48, 108, 0.35);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-ig:hover {
+            background: #e1306c;
+            color: #ffffff;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 16px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px dashed var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <span class="brand-badge">Catálogo Oficial Actualizado</span>
+            <h1>TecnoPoint SG 🚀</h1>
+            <p class="subtitle">Los mejores precios en tecnología, con garantía y confianza.</p>
+            <div class="trust-pills">
+                <div class="trust-pill"><span>✔</span> ENTREGA INMEDIATA</div>
+                <div class="trust-pill"><span>✔</span> GARANTÍA OFICIAL EN EQUIPOS NUEVOS</div>
+                <div class="trust-pill"><span>✔</span> CONSULTAR POR COLORES DISPONIBLES</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="filters-panel">
+            <div class="filters-top">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Buscar modelo, capacidad o marca...">
+                </div>
+                <select id="sortSelect" class="sort-select">
+                    <option value="precio ASC">Precio: Menor a Mayor</option>
+                    <option value="precio DESC">Precio: Mayor a Menor</option>
+                    <option value="nombre ASC">Nombre: A - Z</option>
+                </select>
+            </div>
+
+            <div class="price-filter-bar">
+                <div class="price-inputs">
+                    <label>Rango de Precio:</label>
+                    <div class="price-input-group">
+                        <span>$</span>
+                        <input type="number" id="minPrice" value="0" min="0" step="10">
+                    </div>
+                    <span>—</span>
+                    <div class="price-input-group">
+                        <span>$</span>
+                        <input type="number" id="maxPrice" value="5000000" min="0" step="10">
+                    </div>
+                </div>
+
+                <div class="quick-ranges">
+                    <button class="range-btn active" data-min="0" data-max="5000000">Todos</button>
+                    <button class="range-btn" data-min="0" data-max="650">Hasta U$S 650</button>
+                    <button class="range-btn" data-min="650" data-max="1000">U$S 650 a 1.000</button>
+                    <button class="range-btn" data-min="1000" data-max="2000">U$S 1.000 a 2.000</button>
+                </div>
+            </div>
+
+            <div class="category-tabs">
+                <button class="cat-tab active" data-cat="TODAS">Todos</button>
+                <button class="cat-tab" data-cat="Xiaomi / Poco">Xiaomi / Poco</button>
+                <button class="cat-tab" data-cat="Samsung Galaxy">Samsung</button>
+                <button class="cat-tab" data-cat="Motorola">Motorola</button>
+                <button class="cat-tab" data-cat="Notebooks">Notebooks</button>
+                <button class="cat-tab" data-cat="Consolas">Consolas</button>
+                <button class="cat-tab" data-cat="Smart TVs">Smart TVs</button>
+            </div>
+        </section>
+
+        <div class="results-info">
+            <span id="resultsCount">Cargando catálogo...</span>
+        </div>
+
+        <section class="products-grid" id="productsGrid"></section>
+
+        <footer>
+            <p><strong>TecnoPoint SG</strong> — Catálogo digital de consulta.</p>
+        </footer>
+    </main>
+
+    <script>
+        // Enlace directo al chat directo (DM) de Instagram de TecnoPoint SG
+        const INSTAGRAM_DM_URL = "https://ig.me/m/tecnopoint.sg";
+        let db = null;
+        let currentCategory = "TODAS";
+
+        async function initDatabase() {
+            try {
+                const SQL = await initSqlJs({
+                    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${file}`
+                });
+
+                db = new SQL.Database();
+                
+                db.run(`
+                    CREATE TABLE productos (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        categoria TEXT NOT NULL,
+                        marca TEXT NOT NULL,
+                        nombre TEXT NOT NULL,
+                        detalles TEXT,
+                        condicion TEXT NOT NULL,
+                        precio INTEGER NOT NULL
+                    );
+                `);
+
+                const query = `
+                    INSERT INTO productos (categoria, marca, nombre, detalles, condicion, precio) VALUES
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco C65 4/256GB', 'Consultar colores', 'Nuevo Sellado', 270),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco C71 4/128GB', 'Consultar colores', 'Nuevo Sellado', 220),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco C75 6/128GB', 'Consultar colores', 'Nuevo Sellado', 250),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco C85 8/256GB', 'Consultar colores', 'Nuevo Sellado', 290),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco M6 8/256GB', 'Consultar colores', 'Nuevo Sellado', 290),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco M7 8/256GB', 'Consultar colores', 'Nuevo Sellado', 295),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco M7 Pro (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 325),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco M7 Pro (5G) 12/256GB', 'Consultar colores', 'Nuevo Sellado', 345),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco M7 Pro (5G) 12/512GB', 'Consultar colores', 'Nuevo Sellado', 360),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco X6 (5G) 12/512GB', 'Consultar colores', 'Nuevo Sellado', 410),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco X6 Pro (5G) 12/512GB', 'Consultar colores', 'Nuevo Sellado', 430),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco X7 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 395),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco X7 (5G) 12/512GB', 'Consultar colores', 'Nuevo Sellado', 420),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco X7 Pro (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 425),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco X7 Pro (5G) 12/256GB', 'Consultar colores', 'Nuevo Sellado', 465),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco X7 Pro (5G) 12/512GB', 'Consultar colores', 'Nuevo Sellado', 490),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Note 12 Pro Plus (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 435),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Note 13 Pro (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 415),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Note 13 Pro (5G) 12/512GB', 'Consultar colores', 'Nuevo Sellado', 475),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Note 13 Pro Plus (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 495),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Note 14 6/128GB', 'Consultar colores', 'Nuevo Sellado', 290),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Note 14 8/256GB', 'Consultar colores', 'Nuevo Sellado', 315),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Note 14 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 370),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Note 14s 8/256GB', 'Consultar colores', 'Nuevo Sellado', 365),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Note 14 Pro 8/256GB', 'Consultar colores', 'Nuevo Sellado', 365),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Note 14 Pro 12/512GB', 'Consultar colores', 'Nuevo Sellado', 395),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Note 14 Pro Plus (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 475),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Note 14 Pro Plus (5G) 12/512GB', 'Consultar colores', 'Nuevo Sellado', 505),
+                    ('Xiaomi / Poco', 'Xiaomi', '14T (5G) Leica 12/512GB', 'Consultar colores', 'Nuevo Sellado', 655),
+                    ('Xiaomi / Poco', 'Xiaomi', '14 Ultra (5G) Leica 16/512GB', 'Consultar colores', 'Nuevo Sellado', 1050),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco F6 Pro (5G) 12/256GB', 'Consultar colores', 'Nuevo Sellado', 580),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco F7 (5G) 12/512GB', 'Consultar colores', 'Nuevo Sellado', 580),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco F7 Pro (5G) 12/256GB', 'Consultar colores', 'Nuevo Sellado', 605),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco F7 Ultra (5G) 12/256GB', 'Consultar colores', 'Nuevo Sellado', 770),
+                    ('Xiaomi / Poco', 'Xiaomi', 'Poco F7 Ultra (5G) 16/512GB', 'Consultar colores', 'Nuevo Sellado', 810),
+                    ('Xiaomi / Poco', 'Xiaomi', '15 (5G) Leica 12/512GB', 'Consultar colores', 'Nuevo Sellado', 970),
+                    ('Xiaomi / Poco', 'Xiaomi', '15 Ultra (5G) Leica 16/512GB', 'Consultar colores', 'Nuevo Sellado', 1340),
+
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A04 3/32GB', 'Consultar colores', 'Nuevo Sellado', 225),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A04S 4/128GB', 'Consultar colores', 'Nuevo Sellado', 260),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A06 4/128GB', 'Consultar colores', 'Nuevo Sellado', 228),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A07 4/64GB', 'Consultar colores', 'Nuevo Sellado', 245),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A07 4/128GB', 'Consultar colores', 'Nuevo Sellado', 260),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A14 4/128GB', 'Consultar colores', 'Nuevo Sellado', 255),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A16 4/128GB', 'Consultar colores', 'Nuevo Sellado', 245),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A16 6/128GB', 'Consultar colores', 'Nuevo Sellado', 290),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A16 (5G) 4/128GB', 'Consultar colores', 'Nuevo Sellado', 270),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A16 (5G) 6/128GB', 'Consultar colores', 'Nuevo Sellado', 325),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A16 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 345),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A17 (5G) 6/128GB', 'Consultar colores', 'Nuevo Sellado', 340),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A17 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 345),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A25 (5G) 8/128GB', 'Consultar colores', 'Nuevo Sellado', 345),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A26 (5G) 6/128GB', 'Consultar colores', 'Nuevo Sellado', 335),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A26 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 340),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A34 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 405),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A35 (5G) 6/128GB', 'Consultar colores', 'Nuevo Sellado', 400),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A35 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 445),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A36 (5G) 6/128GB', 'Consultar colores', 'Nuevo Sellado', 380),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A36 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 400),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A55 (5G) 8/128GB', 'Consultar colores', 'Nuevo Sellado', 485),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A55 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 515),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A56 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 470),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy A56 (5G) 12/256GB', 'Consultar colores', 'Nuevo Sellado', 485),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy F15 (5G) 6/128GB', 'Consultar colores', 'Nuevo Sellado', 285),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy S24 FE (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 585),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy S24 PLUS (5G) 12/256GB', 'Consultar colores', 'Nuevo Sellado', 940),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy S24 ULTRA 12/256GB', 'Consultar colores', 'Nuevo Sellado', 945),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy S24 ULTRA 12/512GB', 'Consultar colores', 'Nuevo Sellado', 1040),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy S25 12/128GB', 'Consultar colores', 'Nuevo Sellado', 740),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy S25 12/256GB', 'Consultar colores', 'Nuevo Sellado', 800),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy S25 PLUS 12/256GB', 'Consultar colores', 'Nuevo Sellado', 910),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy S25 PLUS 12/512GB', 'Consultar colores', 'Nuevo Sellado', 960),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy S25 ULTRA 12/256GB', 'Consultar colores', 'Nuevo Sellado', 1040),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy S25 ULTRA 12/512GB', 'Consultar colores', 'Nuevo Sellado', 1145),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy S25 ULTRA 12/1TB', 'Consultar colores', 'Nuevo Sellado', 1225),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy Z Flip 7 FE (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 900),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy Z Flip 7 (5G) 12/512GB', 'Consultar colores', 'Nuevo Sellado', 1060),
+                    ('Samsung Galaxy', 'Samsung', 'Galaxy Z Fold 7 (5G) 12/512GB', 'Consultar colores', 'Nuevo Sellado', 1795),
+
+                    ('Motorola', 'Motorola', 'Moto E14 2/64GB', 'Consultar colores', 'Nuevo Sellado', 215),
+                    ('Motorola', 'Motorola', 'Moto E15 2/64GB', 'Consultar colores', 'Nuevo Sellado', 225),
+                    ('Motorola', 'Motorola', 'Moto G04 4/128GB', 'Consultar colores', 'Nuevo Sellado', 225),
+                    ('Motorola', 'Motorola', 'Moto G04 8/128GB', 'Consultar colores', 'Nuevo Sellado', 245),
+                    ('Motorola', 'Motorola', 'Moto G05 4/128GB', 'Consultar colores', 'Nuevo Sellado', 230),
+                    ('Motorola', 'Motorola', 'Moto G05 4/256GB', 'Consultar colores', 'Nuevo Sellado', 260),
+                    ('Motorola', 'Motorola', 'Moto G14 4/128GB', 'Consultar colores', 'Nuevo Sellado', 225),
+                    ('Motorola', 'Motorola', 'Moto G14 4/256GB', 'Consultar colores', 'Nuevo Sellado', 265),
+                    ('Motorola', 'Motorola', 'Moto G15 4/128GB', 'Consultar colores', 'Nuevo Sellado', 235),
+                    ('Motorola', 'Motorola', 'Moto G15 8/128GB', 'Consultar colores', 'Nuevo Sellado', 250),
+                    ('Motorola', 'Motorola', 'Moto G15 4/512GB', 'Consultar colores', 'Nuevo Sellado', 295),
+                    ('Motorola', 'Motorola', 'Moto G15 Power 8/256GB', 'Consultar colores', 'Nuevo Sellado', 300),
+                    ('Motorola', 'Motorola', 'Moto G23 4/128GB', 'Consultar colores', 'Nuevo Sellado', 245),
+                    ('Motorola', 'Motorola', 'Moto G24 8/128GB', 'Consultar colores', 'Nuevo Sellado', 245),
+                    ('Motorola', 'Motorola', 'Moto G24 4/256GB', 'Consultar colores', 'Nuevo Sellado', 260),
+                    ('Motorola', 'Motorola', 'Moto G35 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 330),
+                    ('Motorola', 'Motorola', 'Moto G54 (5G) 4/128GB', 'Consultar colores', 'Nuevo Sellado', 285),
+                    ('Motorola', 'Motorola', 'Moto G54 Power (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 295),
+                    ('Motorola', 'Motorola', 'Moto G54 Power (5G) 12/256GB', 'Consultar colores', 'Nuevo Sellado', 315),
+                    ('Motorola', 'Motorola', 'Moto G55 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 290),
+                    ('Motorola', 'Motorola', 'Moto G56 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 360),
+                    ('Motorola', 'Motorola', 'Moto G75 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 325),
+                    ('Motorola', 'Motorola', 'Moto G84 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 315),
+                    ('Motorola', 'Motorola', 'Moto G84 (5G) 12/256GB', 'Consultar colores', 'Nuevo Sellado', 340),
+                    ('Motorola', 'Motorola', 'Moto G85 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 330),
+                    ('Motorola', 'Motorola', 'Moto Edge 30 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 355),
+                    ('Motorola', 'Motorola', 'Moto Edge 50 Neo (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 415),
+                    ('Motorola', 'Motorola', 'Moto Edge 50 Fusion (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 355),
+                    ('Motorola', 'Motorola', 'Moto Edge 50 Fusion (5G) 12/512GB', 'Consultar colores', 'Nuevo Sellado', 425),
+                    ('Motorola', 'Motorola', 'Moto Edge 50 Pro (5G) 12/512GB', 'Consultar colores', 'Nuevo Sellado', 565),
+                    ('Motorola', 'Motorola', 'Moto Edge 50 Ultra (5G) 16/1TB', 'Consultar colores', 'Nuevo Sellado', 820),
+                    ('Motorola', 'Motorola', 'Moto Edge 60 Fusion (5G) 12/256GB', 'Consultar colores', 'Nuevo Sellado', 465),
+                    ('Motorola', 'Motorola', 'Moto Edge 60 (5G) 8/256GB', 'Consultar colores', 'Nuevo Sellado', 455),
+                    ('Motorola', 'Motorola', 'Moto Edge 60 Pro (5G) 12/512GB', 'Consultar colores', 'Nuevo Sellado', 690),
+
+                    ('Notebooks', 'HP', 'HP Victus 15-FB2063DX', 'Gaming Laptop', 'Nuevo Sellado', 735),
+                    ('Notebooks', 'Lenovo', 'Lenovo Gaming RTX2050', 'Gaming Laptop', 'Nuevo Sellado', 815),
+                    ('Notebooks', 'MSI', 'MSI A15 B7VE Gaming', 'Gaming Laptop', 'Nuevo Sellado', 970),
+                    ('Notebooks', 'Asus', 'Asus TUF Gaming', 'Gaming Laptop', 'Nuevo Sellado', 985),
+                    ('Notebooks', 'MSI', 'MSI Thin 15', 'Gaming Laptop', 'Nuevo Sellado', 1175),
+                    ('Notebooks', 'Lenovo', 'Lenovo IdeaPad Gaming', 'Gaming Laptop', 'Nuevo Sellado', 1350),
+                    ('Notebooks', 'HP', 'HP Omen 16', 'Gaming Laptop', 'Nuevo Sellado', 1880),
+                    ('Notebooks', 'Dell', 'Dell Alienware m18 R2', 'Gaming Laptop', 'Nuevo Sellado', 3680),
+
+                    ('Consolas', 'Sony', 'PS5 Digital Slim 1TB', 'Consola', 'Nuevo Sellado', 620),
+                    ('Consolas', 'Sony', 'PS5 Disc Slim 1TB', 'Consola', 'Nuevo Sellado', 680),
+                    ('Consolas', 'Sony', 'PS5 Pro Digital 2TB 8K', 'Consola', 'Nuevo Sellado', 990),
+                    ('Consolas', 'Microsoft', 'XBOX Serie S 512GB', 'Consola', 'Nuevo Sellado', 570),
+                    ('Consolas', 'Nintendo', 'Switch OLED (Zelda Edition)', 'Consola', 'Nuevo Sellado', 570),
+                    ('Consolas', 'Nintendo', 'Switch 2 256GB', 'Consola', 'Nuevo Sellado', 720),
+                    ('Consolas', 'Meta', 'Meta Quest 3S 128GB', 'Realidad Virtual', 'Nuevo Sellado', 520),
+
+                    ('Smart TVs', 'AOC', 'Smart TV AOC 32" Roku TV', 'Televisor LED', 'Nuevo Sellado', 269900),
+                    ('Smart TVs', 'Noblex', 'Smart TV Noblex 43" Android TV', 'Televisor LED', 'Nuevo Sellado', 439900),
+                    ('Smart TVs', 'TCL', 'Smart TV TCL 43" Android TV', 'Televisor LED', 'Nuevo Sellado', 474900),
+                    ('Smart TVs', 'Samsung', 'Smart TV Samsung 43" UHD 4K', 'Televisor LED', 'Nuevo Sellado', 589900),
+                    ('Smart TVs', 'Samsung', 'Smart TV Samsung 50" UHD 4K', 'Televisor LED', 'Nuevo Sellado', 744900),
+                    ('Smart TVs', 'Philips', 'Smart TV Philips 55" UHD LED', 'Televisor LED', 'Nuevo Sellado', 809900),
+                    ('Smart TVs', 'Samsung', 'Smart TV Samsung 55" QLED 4K', 'Televisor LED', 'Nuevo Sellado', 1119000),
+                    ('Smart TVs', 'LG', 'Smart TV LG 75" UHD AI 4K', 'Televisor LED', 'Nuevo Sellado', 1889000),
+                    ('Smart TVs', 'Samsung', 'Smart TV Samsung 85” QLED 4K', 'Televisor LED', 'Nuevo Sellado', 4399000);
+                `;
+
+                db.run(query);
+                ejecutarConsultaSQL();
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('resultsCount').textContent = "Error al iniciar SQLite en el navegador.";
+            }
+        }
+
+        function ejecutarConsultaSQL() {
+            if (!db) return;
+
+            const search = document.getElementById('searchInput').value.trim();
+            const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
+            const maxPrice = parseInt(document.getElementById('maxPrice').value) || 9999999;
+            const sortOrder = document.getElementById('sortSelect').value;
+
+            let query = `
+                SELECT id, categoria, marca, nombre, detalles, condicion, precio
+                FROM productos
+                WHERE precio >= $min AND precio <= $max
+            `;
+            const params = { $min: minPrice, $max: maxPrice };
+
+            if (currentCategory !== "TODAS") {
+                query += ` AND categoria = $cat`;
+                params.$cat = currentCategory;
+            }
+
+            if (search !== "") {
+                query += ` AND (nombre LIKE $search OR detalles LIKE $search OR marca LIKE $search)`;
+                params.$search = `%${search}%`;
+            }
+
+            query += ` ORDER BY ${sortOrder}`;
+
+            const stmt = db.prepare(query);
+            stmt.bind(params);
+
+            const productos = [];
+            while (stmt.step()) {
+                productos.push(stmt.getAsObject());
+            }
+            stmt.free();
+
+            renderizarProductos(productos);
+        }
+
+        function renderizarProductos(productos) {
+            const grid = document.getElementById('productsGrid');
+            const countEl = document.getElementById('resultsCount');
+
+            countEl.textContent = `Mostrando ${productos.length} equipo${productos.length === 1 ? '' : 's'}`;
+
+            if (productos.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No encontramos equipos en ese rango o búsqueda</h3>
+                        <p>Probá ampliando el rango de precios o cambiando de categoría.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = productos.map(item => {
+                const esARS = item.categoria === 'Smart TVs';
+                const monedaSimbolo = esARS ? '$' : 'U$S';
+                const precioFormateado = item.precio.toLocaleString('es-AR');
+
+                return `
+                    <article class="product-card">
+                        <div>
+                            <div class="card-top">
+                                <span class="badge-cat">${item.categoria}</span>
+                                <span class="badge-cond">${item.condicion}</span>
+                            </div>
+                            <h3 class="product-title">${item.nombre}</h3>
+                            <p class="product-details">${item.detalles || ''}</p>
+                        </div>
+                        <div class="card-bottom">
+                            <div>
+                                <span class="price-label">Precio Contado</span>
+                                <div class="price-value"><span>${monedaSimbolo}</span>${precioFormateado}</div>
+                            </div>
+                            <a href="${INSTAGRAM_DM_URL}" target="_blank" rel="noopener noreferrer" class="btn-ig">
+                                Consultar
+                            </a>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        document.getElementById('searchInput').addEventListener('input', ejecutarConsultaSQL);
+        document.getElementById('sortSelect').addEventListener('change', ejecutarConsultaSQL);
+        document.getElementById('minPrice').addEventListener('input', ejecutarConsultaSQL);
+        document.getElementById('maxPrice').addEventListener('input', ejecutarConsultaSQL);
+
+        document.querySelectorAll('.range-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('minPrice').value = btn.dataset.min;
+                document.getElementById('maxPrice').value = btn.dataset.max;
+                ejecutarConsultaSQL();
+            });
+        });
+
+        document.querySelectorAll('.cat-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentCategory = tab.dataset.cat;
+                ejecutarConsultaSQL();
+            });
+        });
+
+        initDatabase();
+    </script>
+</body>
+</html>

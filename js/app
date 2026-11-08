@@ -1,0 +1,154 @@
+// Número de WhatsApp para recibir las consultas del catálogo
+const WHATSAPP_NUMBER = "5491100000000";
+
+let db = null;
+let currentCategory = "TODAS";
+
+async function initDatabase() {
+    try {
+        const SQL = await initSqlJs({
+            locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${file}`
+        });
+
+        // Lee el archivo binario SQLite desde la carpeta /db
+       const response = await fetch(`./catalogo.sqlite?v=${Date.now()}`);
+        if (!response.ok) {
+            throw new Error("No se encontró ./db/catalogo.sqlite");
+        }
+
+        const buffer = await response.arrayBuffer();
+        db = new SQL.Database(new Uint8Array(buffer));
+
+        ejecutarConsultaSQL();
+    } catch (error) {
+        console.error("Error al cargar la base de datos:", error);
+        document.getElementById('resultsCount').textContent = 
+            "Asegurate de haber creado ./db/catalogo.sqlite y de abrir el proyecto con Live Server.";
+    }
+}
+
+function ejecutarConsultaSQL() {
+    if (!db) return;
+
+    const search = document.getElementById('searchInput').value.trim();
+    const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
+    const maxPrice = parseInt(document.getElementById('maxPrice').value) || 99999;
+    const sortOrder = document.getElementById('sortSelect').value;
+
+    let query = `
+        SELECT id, categoria, marca, nombre, detalles, condicion, precio
+        FROM productos
+        WHERE precio >= $min AND precio <= $max
+    `;
+    const params = { $min: minPrice, $max: maxPrice };
+
+    if (currentCategory !== "TODAS") {
+        query += ` AND categoria = $cat`;
+        params.$cat = currentCategory;
+    }
+
+    if (search !== "") {
+        query += ` AND (nombre LIKE $search OR detalles LIKE $search OR marca LIKE $search)`;
+        params.$search = `%${search}%`;
+    }
+
+    const allowedSorts = ["precio ASC", "precio DESC", "nombre ASC"];
+    const safeSort = allowedSorts.includes(sortOrder) ? sortOrder : "precio ASC";
+    query += ` ORDER BY ${safeSort}`;
+
+    const stmt = db.prepare(query);
+    stmt.bind(params);
+
+    const productos = [];
+    while (stmt.step()) {
+        productos.push(stmt.getAsObject());
+    }
+    stmt.free();
+
+    renderizarProductos(productos);
+}
+
+function renderizarProductos(productos) {
+    const grid = document.getElementById('productsGrid');
+    const countEl = document.getElementById('resultsCount');
+
+    countEl.textContent = `Mostrando ${productos.length} equipo${productos.length === 1 ? '' : 's'}`;
+
+    if (productos.length === 0) {
+        grid.innerHTML = `
+            <div class="empty-state">
+                <h3>No encontramos equipos en ese rango o búsqueda</h3>
+                <p>Probá ampliando el rango de precios en USD o cambiando de categoría.</p>
+            </div>
+        `;
+        return;
+    }
+
+    grid.innerHTML = productos.map(item => {
+        const mensajeWA = encodeURIComponent(
+            `¡Hola TecnoPoint SG! 🚀 Quería consultar disponibilidad y colores del *${item.nombre}* (${item.condicion}) publicado en el catálogo a *U$S ${item.precio.toLocaleString('es-AR')}*.`
+        );
+        const linkWA = `https://wa.me/${WHATSAPP_NUMBER}?text=${mensajeWA}`;
+
+        return `
+            <article class="product-card">
+                <div>
+                    <div class="card-top">
+                        <span class="badge-cat">${item.categoria}</span>
+                        <span class="badge-cond">${item.condicion}</span>
+                    </div>
+                    <h3 class="product-title">${item.nombre}</h3>
+                    <p class="product-details">${item.detalles || ''}</p>
+                </div>
+                <div class="card-bottom">
+                    <div>
+                        <span class="price-label">Precio Contado</span>
+                        <div class="price-value"><span>U$S</span>${item.precio.toLocaleString('es-AR')}</div>
+                    </div>
+                    <a href="${linkWA}" target="_blank" rel="noopener noreferrer" class="btn-wa">
+                        Consultar
+                    </a>
+                </div>
+            </article>
+        `;
+    }).join('');
+}
+
+// Eventos de filtros
+document.getElementById('searchInput').addEventListener('input', ejecutarConsultaSQL);
+document.getElementById('sortSelect').addEventListener('change', ejecutarConsultaSQL);
+
+function desmarcarRangosRapidos() {
+    document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+}
+
+document.getElementById('minPrice').addEventListener('input', () => {
+    desmarcarRangosRapidos();
+    ejecutarConsultaSQL();
+});
+
+document.getElementById('maxPrice').addEventListener('input', () => {
+    desmarcarRangosRapidos();
+    ejecutarConsultaSQL();
+});
+
+document.querySelectorAll('.range-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        desmarcarRangosRapidos();
+        btn.classList.add('active');
+        document.getElementById('minPrice').value = btn.dataset.min;
+        document.getElementById('maxPrice').value = btn.dataset.max;
+        ejecutarConsultaSQL();
+    });
+});
+
+document.querySelectorAll('.cat-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentCategory = tab.dataset.cat;
+        ejecutarConsultaSQL();
+    });
+});
+
+initDatabase();
